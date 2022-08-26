@@ -3,6 +3,8 @@ from gym.envs.registration import register
 
 from utils.wrappers import MaskVelocityWrapper
 
+import bot.goleftenv
+
 try:
     import pybullet_envs  # pytype: disable=import-error
 except ImportError:
@@ -60,3 +62,13 @@ for env_id in MaskVelocityWrapper.velocity_indices.keys():
         id=f"{name}NoVel-v{version}",
         entry_point=create_no_vel_env(env_id),
     )
+
+register(
+    id="GoLeftEnv-v1",
+    entry_point="bot.goleftenv:GoLeftEnv",
+)
+
+register(
+    id="JavaBot-v1",
+    entry_point="bot.javabot:JavaBot",
+)
