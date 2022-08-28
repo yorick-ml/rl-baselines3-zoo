@@ -35,7 +35,7 @@ class JavaBot(gym.Env):
         self.observation_space = spaces.Dict(
             {
              "grid": spaces.Box(low=-2, high=2, shape=((OBSERVABLE_SIZE*2+1) * (OBSERVABLE_SIZE*2+1), ), dtype=np.int8),
-             "positions": spaces.Box(low=0, high=100, shape=(2, 2)),
+             "positions": spaces.Box(low=0, high=100, shape=(2, 2), dtype=int),
              "modificators": spaces.MultiBinary(5),
              # "mod_positions": spaces.Box(low=0, high=100, shape=(5, 2)),
              "my_mods": spaces.MultiBinary(4),
