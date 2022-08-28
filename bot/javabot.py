@@ -7,8 +7,8 @@ from gym.utils import seeding
 
 from bot.javaconnector import JavaConnector
 
-MAX_STEPS = 30*30
-OBSERVABLE_SIZE = 6
+MAX_STEPS = 150*60*3
+OBSERVABLE_SIZE = 2
 
 
 class JavaBot(gym.Env):
@@ -34,10 +34,10 @@ class JavaBot(gym.Env):
         # The observation will be the coordinate of the agent
         self.observation_space = spaces.Dict(
             {
-             "grid": spaces.Box(low=-2, high=2, shape=(OBSERVABLE_SIZE * OBSERVABLE_SIZE, ), dtype=np.int8),
+             "grid": spaces.Box(low=-2, high=2, shape=((OBSERVABLE_SIZE*2+1) * (OBSERVABLE_SIZE*2+1), ), dtype=np.int8),
              "positions": spaces.Box(low=0, high=100, shape=(2, 2)),
              "modificators": spaces.MultiBinary(5),
-             "mod_positions": spaces.Box(low=0, high=100, shape=(5, 2)),
+             # "mod_positions": spaces.Box(low=0, high=100, shape=(5, 2)),
              "my_mods": spaces.MultiBinary(4),
              "opp_mods": spaces.MultiBinary(4),
              }
@@ -71,7 +71,7 @@ class JavaBot(gym.Env):
         if (my_x <= 2 and action[0] < 0) or (my_x >= 98 and action[0] > 0) or \
                 (my_y <= 2 and action[1] < 0) or (my_y >= 98 and action[1] > 0):
             reward -= 1
-            print("the Wall!")
+            # print("the Wall!")
         # Optionally we can pass additional info, we are not using that for now
         info = {}
         if self.steps == MAX_STEPS:

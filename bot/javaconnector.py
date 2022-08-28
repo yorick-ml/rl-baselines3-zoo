@@ -69,7 +69,7 @@ class JavaConnector:
         mod_positions = [[0, 0]] * len(modifications)
         summary = self.world.getWorldSummary()
         # cells = self.world.getCellsStr()
-        cells = self.world.getCellsPlayer("ML", int(obs_size/2), )
+        cells = self.world.getCellsPlayer("ML", obs_size, )
         cells = re.sub('], \\[', ', ', cells)
         cells = np.fromstring(cells[2:-2], sep=', ', dtype=int)
         positions = summary.getPlayerPositions()
@@ -87,7 +87,7 @@ class JavaConnector:
                 else:
                     m_type += '_2'
             mod_list[modifications[m_type]] = 1
-            mod_positions[modifications[m_type]] = (int(modificationPositions[m].getX()/10), int(modificationPositions[m].getY()/10))
+            # mod_positions[modifications[m_type]] = (int(modificationPositions[m].getX()/10), int(modificationPositions[m].getY()/10))
         playersModification = summary.getPlayerModificationMap()
         self.my_mod_list = [0, ] * 4
         self.opp_mod_list = [0, ] * 4
@@ -104,9 +104,10 @@ class JavaConnector:
         obs["grid"] = cells
         obs["positions"] = (my_position, opp_position)
         obs["modificators"] = mod_list
-        obs["mod_positions"] = mod_positions
+        # obs["mod_positions"] = mod_positions
         obs["my_mods"] = self.my_mod_list
         obs["opp_mods"] = self.opp_mod_list
+        # print(time.time(), obs.values())
         return obs
 
     def get_reward(self):
