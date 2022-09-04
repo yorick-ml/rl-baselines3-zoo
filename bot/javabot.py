@@ -35,7 +35,8 @@ class JavaBot(gym.Env):
         self.observation_space = spaces.Dict(
             {
              "grid": spaces.Box(low=-2, high=2, shape=((OBSERVABLE_SIZE*2+1) * (OBSERVABLE_SIZE*2+1), ), dtype=np.int8),
-             "positions": spaces.Box(low=0, high=100, shape=(2, 2), dtype=int),
+             # "positions": spaces.Box(low=0, high=100, shape=(2, 2), dtype=int),
+             "positions": spaces.Box(low=0, high=9, shape=(2, 2), dtype=int),
              "modificators": spaces.MultiBinary(5),
              # "mod_positions": spaces.Box(low=0, high=100, shape=(5, 2)),
              "my_mods": spaces.MultiBinary(4),
@@ -68,16 +69,16 @@ class JavaBot(gym.Env):
         # Null reward everywhere except when reaching the goal (left of the grid)
         reward = java_env.get_reward()
         my_x, my_y = obs["positions"][0]
-        if (my_x <= 2 and action[0] < 0) or (my_x >= 98 and action[0] > 0) or \
-                (my_y <= 2 and action[1] < 0) or (my_y >= 98 and action[1] > 0):
-            reward -= 1
-            # print("the Wall!")
+        # if (my_x <= 1 and action[0] < 0) or (my_x >= 9 and action[0] > 0) or \
+        #         (my_y <= 1 and action[1] < 0) or (my_y >= 9 and action[1] > 0):
+        #     reward -= 1
+        #     print("the Wall!")
         # Optionally we can pass additional info, we are not using that for now
         info = {}
         if self.steps == MAX_STEPS:
             self.steps = 0
             done = True
-        reward -= 0.01
+        # reward -= 0.01
         return obs, reward, done, info
 
     def render(self, mode='console'):

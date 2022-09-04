@@ -74,9 +74,9 @@ class JavaConnector:
         cells = np.fromstring(cells[2:-2], sep=', ', dtype=int)
         positions = summary.getPlayerPositions()
         my_position = positions[self.my_player]  # 0..1000
-        my_position = (int(my_position.getX()/10), int(my_position.getY()/10))
         opp_position = positions[self.opp_player]
-        opp_position = (int(opp_position.getX()/10), int(opp_position.getY()/10))
+        my_position = (int(my_position.getX()/100), int(my_position.getY()/100))
+        opp_position = (int(opp_position.getX()/100), int(opp_position.getY()/100))
         modificationPositions = summary.getModificationPositions()
         mod_list = [0, ] * 5
         for m in modificationPositions:
@@ -126,13 +126,13 @@ class JavaConnector:
             reward *= 3
         # if self.prev_opp_percent - opp_player_percent > 0:
         reward += self.prev_opp_percent - opp_player_percent
-        if self.can_paint:
-            if my_player_percent <= self.prev_my_percent:
-                # print("old cell not painted")
-                reward -= 0.1
-            else:
-                reward += 0.1
-                # print("new cell painted")
+        # if self.can_paint:
+        #     if my_player_percent <= self.prev_my_percent:
+        #         # print("old cell not painted")
+        #         reward -= 0.1
+        #     else:
+        #         reward += 0.1
+        #         # print("new cell painted")
         self.prev_my_percent = my_player_percent
         self.prev_opp_percent = opp_player_percent
         reward += self.calc_mods()
@@ -150,10 +150,14 @@ class JavaConnector:
 
     def calc_mods(self):
         rew = 0
+        # rew = sum(self.my_mod_list) * 0.05
+        # if rew >= 0.1:
+        #     print("double buf! ", self.my_mod_list)
         for i in range(len(self.my_mod_list)):
             if self.my_mod_list[i] - self.prev_my_mod_list[i] == 1:
-                rew += 0.8
+                rew += 10
         self.prev_my_mod_list = self.my_mod_list
-        if rew > 0:
-            print("Take modificator! ", rew)
+        # if rew > 0.5:
+        #     print("Take modificator! ", rew)
+
         return rew
