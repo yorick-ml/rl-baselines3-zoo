@@ -1,14 +1,14 @@
 JavaBot-v1:
-  n_envs: 3
+  n_envs: 1
   n_timesteps: !!float 1e9
-  policy: 'MultiInputPolicy'
+  policy: 'MlpPolicy'
   n_steps: 1024
-  batch_size: 3072
+  batch_size: 1024
   gae_lambda: 0.8
   gamma: 0.98
-  n_epochs: 5
+  n_epochs: 20
   ent_coef: 0.0
-  learning_rate: lin_0.001
+  learning_rate: lin_0.0003
   clip_range: lin_0.2
 
 

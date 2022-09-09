@@ -40,8 +40,10 @@ def get_prediction():
             "my_mods": (1, 0, 0, 0),
             "opp_mods": (1, 0, 0, 0),
         }
-    action, _states = model.predict(obs)
-    print("action=", action)
+    obs = (0.3, 0.3, 0.3, 0.3)
+    # action, _states = model.predict(obs, deterministic=True)
+    action, _states = model.predict(obs, deterministic=True)
+    print("action=", action, "state ", _states)
 
 
 if __name__ == '__main__':
@@ -49,7 +51,7 @@ if __name__ == '__main__':
     parser.add_argument("--algo", help="RL Algorithm", default="ppo", type=str, required=False,
                         choices=list(ALGOS.keys()))
     parser.add_argument("--env", type=str, default="JavaBot-v1", help="environment ID")
-    parser.add_argument("--model-path", help="Path to model", type=str, default="logs/ppo/JavaBot-v1_44/rl_model_999999_steps")
+    parser.add_argument("--model-path", help="Path to model", type=str, default="logs/ppo/JavaBot-v1_64/rl_model_10000_steps")
     parser.add_argument("--eval-episodes", help="Number of episodes to use for evaluation", default=5, type=int)
     args = parser.parse_args()
 

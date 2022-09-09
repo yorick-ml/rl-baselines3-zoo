@@ -7,7 +7,7 @@ from gym.utils import seeding
 
 from bot.javaconnector import JavaConnector
 
-MAX_STEPS = 150*60*3
+MAX_STEPS = 500*60*3
 OBSERVABLE_SIZE = 2
 
 
@@ -32,17 +32,7 @@ class JavaBot(gym.Env):
         # Example when using discrete actions, we have two: left and right
         self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(2,), dtype=np.float32)
         # The observation will be the coordinate of the agent
-        self.observation_space = spaces.Dict(
-            {
-             "grid": spaces.Box(low=-2, high=2, shape=((OBSERVABLE_SIZE*2+1) * (OBSERVABLE_SIZE*2+1), ), dtype=np.int8),
-             # "positions": spaces.Box(low=0, high=100, shape=(2, 2), dtype=int),
-             "positions": spaces.Box(low=0, high=9, shape=(2, 2), dtype=int),
-             "modificators": spaces.MultiBinary(5),
-             # "mod_positions": spaces.Box(low=0, high=100, shape=(5, 2)),
-             "my_mods": spaces.MultiBinary(4),
-             "opp_mods": spaces.MultiBinary(4),
-             }
-        )
+        self.observation_space = spaces.Box(low=-0.5, high=0.5, shape=(4, ), dtype=np.float)
         self.steps = 0
 
     def reset(self):
@@ -68,7 +58,7 @@ class JavaBot(gym.Env):
 
         # Null reward everywhere except when reaching the goal (left of the grid)
         reward = java_env.get_reward()
-        my_x, my_y = obs["positions"][0]
+        # my_x, my_y = obs["positions"][0]
         # if (my_x <= 1 and action[0] < 0) or (my_x >= 9 and action[0] > 0) or \
         #         (my_y <= 1 and action[1] < 0) or (my_y >= 9 and action[1] > 0):
         #     reward -= 1

@@ -66,49 +66,51 @@ class JavaConnector:
     def get_observation(self, obs_size):
         self.can_paint = False
         obs = {}
-        mod_positions = [[0, 0]] * len(modifications)
+        # mod_positions = [[0, 0]] * len(modifications)
         summary = self.world.getWorldSummary()
         # cells = self.world.getCellsStr()
-        cells = self.world.getCellsPlayer("ML", obs_size, )
-        cells = re.sub('], \\[', ', ', cells)
-        cells = np.fromstring(cells[2:-2], sep=', ', dtype=int)
+        # cells = self.world.getCellsPlayer("ML", obs_size, )
+        # cells = re.sub('], \\[', ', ', cells)
+        # cells = np.fromstring(cells[2:-2], sep=', ', dtype=int)
         positions = summary.getPlayerPositions()
         my_position = positions[self.my_player]  # 0..1000
         opp_position = positions[self.opp_player]
-        my_position = (int(my_position.getX()/100), int(my_position.getY()/100))
-        opp_position = (int(opp_position.getX()/100), int(opp_position.getY()/100))
-        modificationPositions = summary.getModificationPositions()
-        mod_list = [0, ] * 5
-        for m in modificationPositions:
-            m_type = str(m.getType())
-            if m_type == 'CAN_PAINT':
-                if modificationPositions[m].getX() == 100:
-                    m_type += '_1'
-                else:
-                    m_type += '_2'
-            mod_list[modifications[m_type]] = 1
-            # mod_positions[modifications[m_type]] = (int(modificationPositions[m].getX()/10), int(modificationPositions[m].getY()/10))
-        playersModification = summary.getPlayerModificationMap()
-        self.my_mod_list = [0, ] * 4
-        self.opp_mod_list = [0, ] * 4
-        my_mods = playersModification[self.my_player]
-        opp_mods = playersModification[self.opp_player]
-        for m in my_mods:
-            m_type = str(m.getType())
-            self.my_mod_list[players_modifications[m_type]] = 1
-            if m_type == "CAN_PAINT":
-                self.can_paint = True
-        for m in opp_mods:
-            m_type = str(m.getType())
-            self.opp_mod_list[players_modifications[m_type]] = 1
-        obs["grid"] = cells
-        obs["positions"] = (my_position, opp_position)
-        obs["modificators"] = mod_list
+        my_position = (float(my_position.getX())/1000-0.5, float(my_position.getY())/1000-0.5)
+        opp_position = (float(opp_position.getX())/1000-0.5, float(opp_position.getY())/1000-0.5)
+        # print(my_position, opp_position)
+        # opp_position = (int(opp_position.getX()/100), int(opp_position.getY()/100))
+        # modificationPositions = summary.getModificationPositions()
+        # mod_list = [0, ] * 5
+        # for m in modificationPositions:
+        #     m_type = str(m.getType())
+        #     if m_type == 'CAN_PAINT':
+        #         if modificationPositions[m].getX() == 100:
+        #             m_type += '_1'
+        #         else:
+        #             m_type += '_2'
+        #     mod_list[modifications[m_type]] = 1
+        #     # mod_positions[modifications[m_type]] = (int(modificationPositions[m].getX()/10), int(modificationPositions[m].getY()/10))
+        # playersModification = summary.getPlayerModificationMap()
+        # self.my_mod_list = [0, ] * 4
+        # self.opp_mod_list = [0, ] * 4
+        # my_mods = playersModification[self.my_player]
+        # opp_mods = playersModification[self.opp_player]
+        # for m in my_mods:
+        #     m_type = str(m.getType())
+        #     self.my_mod_list[players_modifications[m_type]] = 1
+        #     if m_type == "CAN_PAINT":
+        #         self.can_paint = True
+        # for m in opp_mods:
+        #     m_type = str(m.getType())
+        #     self.opp_mod_list[players_modifications[m_type]] = 1
+        # obs["grid"] = cells
+        # obs["positions"] = (my_position, opp_position)
+        # obs["modificators"] = mod_list
         # obs["mod_positions"] = mod_positions
-        obs["my_mods"] = self.my_mod_list
-        obs["opp_mods"] = self.opp_mod_list
+        # obs["my_mods"] = self.my_mod_list
+        # obs["opp_mods"] = self.opp_mod_list
         # print(time.time(), obs.values())
-        return obs
+        return my_position + opp_position
 
     def get_reward(self):
         reward = 0
@@ -122,8 +124,8 @@ class JavaConnector:
             opp_player_percent = player1_percent
 
         reward += my_player_percent - self.prev_my_percent
-        if reward > 0:
-            reward *= 3
+        # if reward > 0:
+        #     reward *= 3
         # if self.prev_opp_percent - opp_player_percent > 0:
         reward += self.prev_opp_percent - opp_player_percent
         # if self.can_paint:
@@ -133,9 +135,9 @@ class JavaConnector:
         #     else:
         #         reward += 0.1
         #         # print("new cell painted")
-        self.prev_my_percent = my_player_percent
-        self.prev_opp_percent = opp_player_percent
-        reward += self.calc_mods()
+        # self.prev_my_percent = my_player_percent
+        # self.prev_opp_percent = opp_player_percent
+        # reward += self.calc_mods()
         # if reward > 0:
         #     print("base reward %s" % reward)
         if self.first_time:

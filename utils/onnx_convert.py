@@ -1,5 +1,7 @@
+import numpy as np
 from stable_baselines3 import PPO
 import torch
+from stable_baselines3.common.preprocessing import preprocess_obs
 
 
 class OnnxablePolicy(torch.nn.Module):
@@ -8,6 +10,7 @@ class OnnxablePolicy(torch.nn.Module):
         self.extractor = extractor
         self.action_net = action_net
         self.value_net = value_net
+        self.training = False
 
     def forward(self, observation):
         # NOTE: You may have to process (normalize) observation in the correct
@@ -17,10 +20,23 @@ class OnnxablePolicy(torch.nn.Module):
 
 
 if __name__ == "__main__":
-    model = PPO.load("../logs/ppo/JavaBot-v1_44/rl_model_999999_steps")
+    model = PPO.load("../logs/ppo/JavaBot-v1_64/rl_model_10000_steps")
     model.policy.to("cpu")
     onnxable_model = OnnxablePolicy(model.policy.mlp_extractor, model.policy.action_net, model.policy.value_net)
-    obs = [0, 0, 0, 0, -2, 0, 0, 0, 0, -2, 0, 0, 0, 0, -2, 0, 0, 0, 0, -2, -2, -2, -2, -2, -2, 9, 9, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]
-    dummy_input = torch.Tensor(obs)
+    obs = torch.tensor((0.3, 0.3, 0.3, 0.3))
+    # dummy_input = torch.randn(4)
+    torch.onnx.export(onnxable_model, obs, "my_ppo_model.onnx", opset_version=9, input_names=['zzz'])
 
-    torch.onnx.export(onnxable_model, dummy_input, "my_ppo_model.onnx", opset_version=9)
+    import onnx
+    import onnxruntime as ort
+    import numpy as np
+
+    onnx_model = onnx.load("my_ppo_model.onnx")
+    onnx.checker.check_model(onnx_model)
+
+    # observation = np.zeros((1, 4)).astype(np.float32)
+    obs = (0.3, 0.3, 0.3, 0.3)
+    ort_sess = ort.InferenceSession("my_ppo_model.onnx")
+
+    action, value = ort_sess.run(None, {'zzz': np.array(obs, dtype=np.float32)})
+    print(action)
