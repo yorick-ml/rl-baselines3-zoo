@@ -61,23 +61,22 @@ if __name__ == "__main__":
     onnx_model = onnx.load("my_ppo_model.onnx")
     onnx.checker.check_model(onnx_model)
 
-    obs = {'grid': np.random.randint(-2, 2, (1, 25)),
-           'positions': (0.3, 0.3, 0.3, 0.3),
-           'modificators': (0, 0, 0, 0, 0),
-           'my_mods': (0, 0, 0, 0),
+    obs = {'grid': np.array([[-2, 0, -2, -1, 0, 0, -2, 1, 1, -1, -1, 1, 0, -2, 0, -1, -1, -1, 1, 1, -1, 0, -1, -1, -2]], dtype=np.int64),
+           'positions': np.array((0.3, 0.3, 0.3, 0.3), ndmin=2, dtype=np.float32),
+           'modificators': np.array((0, 0, 0, 0, 0), dtype=np.int64, ndmin=2),
+           'my_mods': np.array((0, 0, 0, 0), dtype=np.int64, ndmin=2)
            }
 
-    grid = np.random.randint(-2, 2, (1, 25), dtype=np.int64)
-    positions = np.array((0.3, 0.3, 0.3, 0.3), ndmin=2, dtype=np.float32)
-    modificators = np.array((0, 0, 0, 0, 0), dtype=np.int64, ndmin=2)
-    my_mods = np.array((0, 0, 0, 0), dtype=np.int64, ndmin=2)
-
+    # grid = np.random.randint(-2, 2, (1, 25), dtype=np.int64)
+    # grid = np.array([[-2, 0, -2, -1, 0, 0, -2, 1, 1, -1, -1, 1, 0, -2, 0, -1, -1, -1, 1, 1, -1, 0, -1, -1, -2]], dtype=np.int64)
+    # positions = np.array((0.3, 0.3, 0.3, 0.3), ndmin=2, dtype=np.float32)
+    # modificators = np.array((0, 0, 0, 0, 0), dtype=np.int64, ndmin=2)
+    # my_mods = np.array((0, 0, 0, 0), dtype=np.int64, ndmin=2)
+    # inputs = ort_sess.get_inputs()
+    # input1_name = inputs[0].name
+    # input2_name = inputs[1].name
+    # input3_name = inputs[2].name
+    # input4_name = inputs[3].name
     ort_sess = ort.InferenceSession("my_ppo_model.onnx")
-    inputs = ort_sess.get_inputs()
-    input1_name = inputs[0].name
-    input2_name = inputs[1].name
-    input3_name = inputs[2].name
-    input4_name = inputs[3].name
-    action, value = ort_sess.run(None, {input1_name: grid, input2_name: positions, input3_name: modificators,
-                                        input4_name: my_mods})
+    action, value = ort_sess.run(None, obs)
     print(action)
