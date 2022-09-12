@@ -34,13 +34,13 @@ def evaluate(env, model, num_steps=1000):
 
 def get_prediction():
     obs = {
-            "grid": (0, 0, 0, 0, -2, 0, 0, 0, 0, -2, 0, 0, 0, 0, -2, 0, 0, 0, 0, -2, -2, -2, -2, -2, -2),
-            "positions": ((9, 9), (0, 0)),
+            "grid": (-2, 0, -2, -1, 0, 0, -2, 1, 1, -1, -1, 1, 0, -2, 0, -1, -1, -1, 1, 1, -1, 0, -1, -1, -2),
+            "positions": ((10, 0), (0, 0)),
             "modificators": (0, 0, 0, 0, 0),
-            "my_mods": (1, 0, 0, 0),
-            "opp_mods": (1, 0, 0, 0),
+            "my_mods": (0, 0, 0, 0),
+            "opp_mods": (0, 0, 0, 0),
         }
-    action, _states = model.predict(obs)
+    action, _states = model.predict(obs, deterministic=True)
     print("action=", action)
 
 
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     parser.add_argument("--algo", help="RL Algorithm", default="ppo", type=str, required=False,
                         choices=list(ALGOS.keys()))
     parser.add_argument("--env", type=str, default="JavaBot-v1", help="environment ID")
-    parser.add_argument("--model-path", help="Path to model", type=str, default="logs/ppo/JavaBot-v1_44/rl_model_999999_steps")
+    parser.add_argument("--model-path", help="Path to model", type=str, default="rl_model_24_2M_steps")
     parser.add_argument("--eval-episodes", help="Number of episodes to use for evaluation", default=5, type=int)
     args = parser.parse_args()
 

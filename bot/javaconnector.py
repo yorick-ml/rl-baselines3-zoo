@@ -75,8 +75,12 @@ class JavaConnector:
         positions = summary.getPlayerPositions()
         my_position = positions[self.my_player]  # 0..1000
         opp_position = positions[self.opp_player]
-        my_position = (int(my_position.getX()/100), int(my_position.getY()/100))
-        opp_position = (int(opp_position.getX()/100), int(opp_position.getY()/100))
+        # my_position = (int(my_position.getX()/100), int(my_position.getY()/100))
+        # opp_position = (int(opp_position.getX()/100), int(opp_position.getY()/100))
+
+        my_position = (int(my_position.getX()/10), int(my_position.getY()/10))
+        opp_position = (int(opp_position.getX()/10), int(opp_position.getY()/10))
+
         modificationPositions = summary.getModificationPositions()
         mod_list = [0, ] * 5
         for m in modificationPositions:
