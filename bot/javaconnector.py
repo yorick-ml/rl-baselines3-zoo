@@ -16,7 +16,6 @@ class JavaConnector:
         params = GatewayParameters(port=port)
         gateway = JavaGateway(gateway_parameters=params)
         self.controller = gateway.entry_point
-        self.reset_season()
         self.first_time = True
         self.prev_my_percent = 0
         self.prev_opp_percent = 0
@@ -24,9 +23,46 @@ class JavaConnector:
         self.my_mod_list = [0, ] * 4
         self.opp_mod_list = [0, ] * 4
         self.can_paint = False
+        self.game_info = None
+        self.engine = None
+        self.world = None
+        self.summary = None
+        self.player1 = None
+        self.player2 = None
+        self.my_player = None
+        self.opp_player = None
+        self.action_player = None
+        self.my_player_ind = -1
+        self.reset_season()
+        print(self.action_player.getName(), self.action_player.getClass())
+        self.my_player_ind = self.player1.getName() == 'Controlled' and 1 or 2
 
     def reset_season(self):
-        self.controller.startSeason()
+        self.game_info = None
+        self.engine = None
+        self.world = None
+        self.summary = None
+        while self.game_info is None:
+            self.game_info = self.controller.getCurrentPlayingGame()
+        while self.engine is None:
+            self.engine = self.controller.getCurrentEngine()
+        while self.world is None:
+            self.world = self.controller.getCurrentWorld()
+        while self.summary is None:
+            self.summary = self.world.getWorldSummary()
+        self.player1 = self.game_info.getPlayer1Implementation()
+        self.player2 = self.game_info.getPlayer2Implementation()
+        if self.player1.getName() == 'Controlled':
+            self.my_player = self.player1.getMyPlayer(self.summary)
+            self.opp_player = self.player1.getOtherPlayer(self.summary)
+            self.action_player = self.player1
+            self.my_player_ind = 1
+        else:
+            self.my_player = self.player1.getOtherPlayer(self.summary)
+            self.opp_player = self.player1.getMyPlayer(self.summary)
+            self.my_player_ind = 2
+            self.action_player = self.player2
+
         self.first_time = True
         self.can_paint = False
         self.prev_my_mod_list = [0, ] * 4
@@ -34,27 +70,17 @@ class JavaConnector:
         self.opp_mod_list = [0, ] * 4
         self.prev_my_percent = 0
         self.prev_opp_percent = 0
-        time.sleep(1)
-        self.game_info = self.controller.getCurrentPlayingGame()
-        self.engine = self.controller.getEngine()
-        self.world = self.controller.getWorld()
-        self.player1 = self.game_info.getPlayer1()
-        self.player2 = self.game_info.getPlayer2()
-        self.my_player_ind = self.player1.getName() == "ML" and 1 or 2
-        if self.player1.getName() == "ML":
-            self.my_player = self.player1
-            self.opp_player = self.player2
-        else:
-            self.my_player = self.player2
-            self.opp_player = self.player1
-        # print(self.my_player)
+
 
     def make_one_step(self, action):
         # print("step")
-        my_player = self.my_player
-        my_player.setAction_x(float(action[0] * 100))
-        my_player.setAction_y(float(action[1] * 100))
-        self.engine.setExternal_do_turn(True)
+        action_player = self.action_player
+        action_player.setAction_x(float(action[0] * 100))
+        action_player.setAction_y(float(action[1] * 100))
+        # while self.engine.isPy4j_can_do_turn():
+        #     time.sleep(0.5)
+        #     print("wait for turn over")
+        self.engine.setPy4j_can_do_turn(True)
         # i = 0
         # while self.engine.getNot_breakable_counter() > 0:
         #     time.sleep(0.1)
@@ -67,17 +93,17 @@ class JavaConnector:
         self.can_paint = False
         obs = {}
         # mod_positions = [[0, 0]] * len(modifications)
-        summary = self.world.getWorldSummary()
+        # summary = self.world.getWorldSummary()
         # cells = self.world.getCellsStr()
-        cells = self.world.getCellsPlayer("ML", obs_size, )
+        cells = self.world.getCellsAroundPlayer('Controlled', obs_size, )
         cells = re.sub('], \\[', ', ', cells)
         cells = np.fromstring(cells[2:-2], sep=', ', dtype=int)
-        positions = summary.getPlayerPositions()
+        positions = self.world.getPositionsPy4j()
         my_position = positions[self.my_player]  # 0..1000
         opp_position = positions[self.opp_player]
-        my_position = (float(my_position.getX()/1000-0.5), float(my_position.getY()/1000-0.5))
-        opp_position = (float(opp_position.getX()/1000-0.5), float(opp_position.getY()/1000-0.5))
-        modificationPositions = summary.getModificationPositions()
+        my_position = (float(my_position.getX()/1000), float(my_position.getY()/1000))
+        opp_position = (float(opp_position.getX()/1000), float(opp_position.getY()/1000))
+        modificationPositions = self.summary.getModificationPositions()
         mod_list = [0, ] * 5
         for m in modificationPositions:
             m_type = str(m.getType())
@@ -88,7 +114,7 @@ class JavaConnector:
                     m_type += '_2'
             mod_list[modifications[m_type]] = 1
             # mod_positions[modifications[m_type]] = (int(modificationPositions[m].getX()/10), int(modificationPositions[m].getY()/10))
-        playersModification = summary.getPlayerModificationMap()
+        playersModification = self.summary.getPlayerModificationMap()
         self.my_mod_list = [0, ] * 4
         # self.opp_mod_list = [0, ] * 4
         my_mods = playersModification[self.my_player]

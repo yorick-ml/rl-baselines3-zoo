@@ -34,9 +34,9 @@ class JavaBot(gym.Env):
         # The observation will be the coordinate of the agent
         self.observation_space = spaces.Dict(
             {
-             "grid": spaces.Box(low=-2, high=2, shape=((OBSERVABLE_SIZE*2+1) * (OBSERVABLE_SIZE*2+1), ), dtype=np.int8),
+             "grid": spaces.Box(low=0, high=3, shape=((OBSERVABLE_SIZE*2+1) * (OBSERVABLE_SIZE*2+1), ), dtype=np.int8),
              # "positions": spaces.Box(low=0, high=100, shape=(2, 2), dtype=int),
-             "positions": spaces.Box(low=-0.5, high=0.5, shape=(4, ), dtype=np.float),
+             "positions": spaces.Box(low=0, high=1, shape=(4, ), dtype=np.float),
              "modificators": spaces.MultiBinary(5),
              # "mod_positions": spaces.Box(low=0, high=100, shape=(5, 2)),
              "my_mods": spaces.MultiBinary(4),
@@ -44,6 +44,7 @@ class JavaBot(gym.Env):
              }
         )
         self.steps = 0
+        self.java_env = None
 
     def reset(self):
         self.java_env.reset_season()
@@ -52,7 +53,8 @@ class JavaBot(gym.Env):
 
     def seed(self, seed=None):
         self.seed_internal = seed
-        self.java_env = JavaConnector(port=25331+seed*2)
+        if self.java_env is None:
+            self.java_env = JavaConnector(port=25331+seed*2)
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
