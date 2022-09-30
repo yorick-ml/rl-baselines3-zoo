@@ -75,21 +75,10 @@ class JavaConnector:
 
 
     def make_one_step(self, action):
-        # print("step")
         action_player = self.action_player
-        action_player.setAction_x(float(action[0] * 100))
-        action_player.setAction_y(float(action[1] * 100))
-        # while self.engine.isPy4j_can_do_turn():
-        #     time.sleep(0.5)
-        #     print("wait for turn over")
-        self.engine.setPy4j_can_do_turn(10)
-        # i = 0
-        # while self.engine.getNot_breakable_counter() > 0:
-        #     time.sleep(0.1)
-        #     # print(i)
-        #     i += 1
-        #     continue
-        # engine.setExternal_control(False)
+        action_player.setAction_x(float(action[0]))
+        action_player.setAction_y(float(action[1]))
+        self.engine.setPy4j_can_do_turn(5)
 
     def get_observation(self, obs_size):
         self.can_paint = False
@@ -168,7 +157,7 @@ class JavaConnector:
         #     print("base reward %s" % reward)
         if self.first_time:
             self.first_time = False
-            print("Reset!")
+            # print("Reset!")
             return 0
         # print(reward)
         return reward
