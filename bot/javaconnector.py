@@ -13,7 +13,9 @@ players_modifications = {'CAN_PAINT': 0, 'OTHER_PLAYER_CANNOT_PAINT': 1, 'DOUBLE
 
 class JavaConnector:
     def __init__(self, port):
-        params = GatewayParameters(port=port)
+        # address = "192.168.31.46"
+        address = "127.0.0.1"
+        params = GatewayParameters(address=address, port=port)
         gateway = JavaGateway(gateway_parameters=params)
         self.controller = gateway.entry_point
         self.first_time = True
