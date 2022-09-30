@@ -82,7 +82,7 @@ class JavaConnector:
         # while self.engine.isPy4j_can_do_turn():
         #     time.sleep(0.5)
         #     print("wait for turn over")
-        self.engine.setPy4j_can_do_turn(True)
+        self.engine.setPy4j_can_do_turn(10)
         # i = 0
         # while self.engine.getNot_breakable_counter() > 0:
         #     time.sleep(0.1)
