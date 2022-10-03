@@ -14,7 +14,7 @@ DEFAULT_JAVA_SERVER = "127.0.0.1"
 
 class JavaConnector:
     def __init__(self, port):
-        address = os.environ.get('java_server', DEFAULT_JAVA_SERVER)
+        address = os.environ.get('JAVA_SERVER', DEFAULT_JAVA_SERVER)
         params = GatewayParameters(address=address, port=port)
         gateway = JavaGateway(gateway_parameters=params)
         self.controller = gateway.entry_point
