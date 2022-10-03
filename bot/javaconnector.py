@@ -1,6 +1,6 @@
 import random
 import re
-import time
+import os
 
 import numpy as np
 from py4j.java_gateway import JavaGateway, GatewayParameters
@@ -10,11 +10,11 @@ modifications = {'CAN_PAINT_1': 0, 'CAN_PAINT_2': 1, 'OTHER_PLAYER_CANNOT_PAINT'
 players_modifications = {'CAN_PAINT': 0, 'OTHER_PLAYER_CANNOT_PAINT': 1, 'DOUBLE_PAINT_RADIUS': 2,
                          'DOUBLE_SPEED': 3}
 
+DEFAULT_JAVA_SERVER = "127.0.0.1"
 
 class JavaConnector:
     def __init__(self, port):
-        # address = "192.168.31.46"
-        address = "127.0.0.1"
+        address = os.environ.get('java_server', DEFAULT_JAVA_SERVER)
         params = GatewayParameters(address=address, port=port)
         gateway = JavaGateway(gateway_parameters=params)
         self.controller = gateway.entry_point
