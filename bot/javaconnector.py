@@ -172,7 +172,7 @@ class JavaConnector:
         #     print("double buf! ", self.my_mod_list)
         for i in range(len(self.my_mod_list)):
             if self.my_mod_list[i] - self.prev_my_mod_list[i] == 1:
-                rew += 10
+                rew += 5
         self.prev_my_mod_list = self.my_mod_list
         # if rew > 0.5:
         #     print("Take modificator! ", rew)
