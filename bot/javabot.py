@@ -8,7 +8,7 @@ from gym.utils import seeding
 from bot.javaconnector import JavaConnector
 
 MAX_STEPS = 150*60*3
-OBSERVABLE_SIZE = 2
+OBSERVABLE_SIZE = 100
 
 
 class JavaBot(gym.Env):
@@ -34,7 +34,7 @@ class JavaBot(gym.Env):
         # The observation will be the coordinate of the agent
         self.observation_space = spaces.Dict(
             {
-             "grid": spaces.Box(low=0, high=3, shape=((OBSERVABLE_SIZE*2+1) * (OBSERVABLE_SIZE*2+1), ), dtype=np.int8),
+             "grid": spaces.Box(low=0, high=2, shape=(OBSERVABLE_SIZE * OBSERVABLE_SIZE,), dtype=np.int8),
              # "positions": spaces.Box(low=0, high=100, shape=(2, 2), dtype=int),
              "positions": spaces.Box(low=0, high=1, shape=(4, ), dtype=np.float),
              "modificators": spaces.MultiBinary(5),

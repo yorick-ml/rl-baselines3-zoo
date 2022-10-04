@@ -12,6 +12,7 @@ players_modifications = {'CAN_PAINT': 0, 'OTHER_PLAYER_CANNOT_PAINT': 1, 'DOUBLE
 
 DEFAULT_JAVA_SERVER = "127.0.0.1"
 
+
 class JavaConnector:
     def __init__(self, port):
         address = os.environ.get('JAVA_SERVER', DEFAULT_JAVA_SERVER)
@@ -86,7 +87,8 @@ class JavaConnector:
         # mod_positions = [[0, 0]] * len(modifications)
         # summary = self.world.getWorldSummary()
         # cells = self.world.getCellsStr()
-        cells = self.world.getCellsAroundPlayer('Controlled', obs_size, )
+        # cells = self.world.getCellsAroundPlayer('Controlled', obs_size, )
+        cells = self.world.getCellsPy4j('Controlled')
         cells = re.sub('], \\[', ', ', cells)
         cells = np.fromstring(cells[2:-2], sep=', ', dtype=int)
         positions = self.world.getPositionsPy4j()
