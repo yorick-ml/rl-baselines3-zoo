@@ -81,14 +81,14 @@ class JavaConnector:
         action_player.setAction_y(float(action[1]))
         self.engine.setPy4j_can_do_turn(5)
 
-    def get_observation(self, obs_size):
+    def get_observation(self, resample_factor=1):
         self.can_paint = False
         obs = {}
         # mod_positions = [[0, 0]] * len(modifications)
         # summary = self.world.getWorldSummary()
         # cells = self.world.getCellsStr()
         # cells = self.world.getCellsAroundPlayer('Controlled', obs_size, )
-        cells = self.world.getCellsPy4j('Controlled')
+        cells = self.world.getCellsPy4j('Controlled', resample_factor)
         cells = re.sub('], \\[', ', ', cells)
         cells = np.fromstring(cells[2:-2], sep=', ', dtype=int)
         positions = self.world.getPositionsPy4j()

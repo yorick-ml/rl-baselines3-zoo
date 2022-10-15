@@ -9,7 +9,7 @@ from bot.javaconnector import JavaConnector
 
 MAX_STEPS = 150*60*3
 OBSERVABLE_SIZE = 100
-
+RESAMPLE_FACTOR = 5
 
 class JavaBot(gym.Env):
     """
@@ -34,7 +34,9 @@ class JavaBot(gym.Env):
         # The observation will be the coordinate of the agent
         self.observation_space = spaces.Dict(
             {
-             "grid": spaces.Box(low=0, high=2, shape=(OBSERVABLE_SIZE * OBSERVABLE_SIZE,), dtype=np.int8),
+             "grid": spaces.Box(low=0, high=2,
+                                shape=(int(OBSERVABLE_SIZE/RESAMPLE_FACTOR) * int(OBSERVABLE_SIZE/RESAMPLE_FACTOR),),
+                                dtype=np.int8),
              # "positions": spaces.Box(low=0, high=100, shape=(2, 2), dtype=int),
              "positions": spaces.Box(low=0, high=1, shape=(4, ), dtype=np.float),
              "modificators": spaces.MultiBinary(5),
@@ -48,7 +50,7 @@ class JavaBot(gym.Env):
 
     def reset(self):
         self.java_env.reset_season()
-        obs = self.java_env.get_observation(OBSERVABLE_SIZE)
+        obs = self.java_env.get_observation(RESAMPLE_FACTOR)
         return obs
 
     def seed(self, seed=None):
@@ -64,7 +66,7 @@ class JavaBot(gym.Env):
         # action = (random.randint(-1, 1), random.randint(-1, 1))
         java_env.make_one_step(action)
         # Account for the boundaries of the grid
-        obs = java_env.get_observation(OBSERVABLE_SIZE)
+        obs = java_env.get_observation(RESAMPLE_FACTOR)
         done = java_env.is_round_over()
         # done = False
 
