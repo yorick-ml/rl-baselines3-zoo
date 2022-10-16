@@ -1,6 +1,7 @@
 import random
 import re
 import os
+import time
 
 import numpy as np
 from py4j.java_gateway import JavaGateway, GatewayParameters
@@ -74,12 +75,14 @@ class JavaConnector:
         self.prev_my_percent = 0
         self.prev_opp_percent = 0
 
-
     def make_one_step(self, action):
+        # action_player.setAction_y((random.random()-0.5))
+        # action_player.setAction_x((random.random()-0.5))
+        # print(action)
         action_player = self.action_player
         action_player.setAction_x(float(action[0]))
         action_player.setAction_y(float(action[1]))
-        self.engine.setPy4j_can_do_turn(5)
+        self.engine.setPy4j_can_do_turn(10)
 
     def get_observation(self, resample_factor=1):
         self.can_paint = False
@@ -143,8 +146,8 @@ class JavaConnector:
         reward += my_player_percent - self.prev_my_percent
         # if reward > 0:
         #     reward *= 3
-        if self.prev_opp_percent - opp_player_percent > 0:
-            reward += self.prev_opp_percent - opp_player_percent
+        # if self.prev_opp_percent - opp_player_percent > 0:
+        reward += self.prev_opp_percent - opp_player_percent
         # if self.can_paint:
         #     if my_player_percent <= self.prev_my_percent:
         #         # print("old cell not painted")
@@ -174,7 +177,7 @@ class JavaConnector:
         #     print("double buf! ", self.my_mod_list)
         for i in range(len(self.my_mod_list)):
             if self.my_mod_list[i] - self.prev_my_mod_list[i] == 1:
-                rew += 5
+                rew += 1
         self.prev_my_mod_list = self.my_mod_list
         # if rew > 0.5:
         #     print("Take modificator! ", rew)

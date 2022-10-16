@@ -9,7 +9,7 @@ from bot.javaconnector import JavaConnector
 
 MAX_STEPS = 150*60*3
 OBSERVABLE_SIZE = 100
-RESAMPLE_FACTOR = 5
+RESAMPLE_FACTOR = 10
 
 class JavaBot(gym.Env):
     """
@@ -30,7 +30,7 @@ class JavaBot(gym.Env):
         # Define action and observation space
         # They must be gym.spaces objects
         # Example when using discrete actions, we have two: left and right
-        self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(2,), dtype=np.float32)
+        self.action_space = spaces.Box(low=-0.5, high=0.5, shape=(2,), dtype=np.float16)
         # The observation will be the coordinate of the agent
         self.observation_space = spaces.Dict(
             {
